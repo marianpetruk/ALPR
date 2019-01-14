@@ -1,0 +1,1 @@
+run.py --output_dir ../datasets/dataset-n10000-w1-ch1-wd30-ht38-nrand/data --language en --count 10000 --upper_case --input_file configs/alphabet.abc --length 1 --format 38 --thread_count 2 --extension jpg --background 1 --name_format 2 --text_color #0f0c0c --width 30 --text_len 1

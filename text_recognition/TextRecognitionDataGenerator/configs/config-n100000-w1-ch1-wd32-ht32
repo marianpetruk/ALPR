@@ -1,0 +1,1 @@
+run.py --output_dir ../datasets/dataset-n100000-w1-ch1-wd32-ht32/data --language en --count 100000 --upper_case --random_sequences --include_letters --include_numbers --length 1 --format 32 --thread_count 2 --extension jpg --background 1 --name_format 2 --text_color #0f0c0c --width 32 --text_len 1
