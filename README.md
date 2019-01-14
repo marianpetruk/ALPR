@@ -20,9 +20,13 @@ Artifical Intelligence Fundamentals course project
 
 
 ## Dependencies
-  - [![Anaconda-Server Badge](https://anaconda.org/anaconda/numpy/badges/installer/conda.svg)](https://conda.anaconda.org/anaconda): `conda install numpy`
-  - [![Anaconda-Server Badge](https://anaconda.org/anaconda/scipy/badges/installer/conda.svg)](https://conda.anaconda.org/anaconda): `conda install scipy`
-  - [![Anaconda-Server Badge](https://anaconda.org/anaconda/matplotlib/badges/installer/conda.svg)](https://conda.anaconda.org/anaconda): `conda install matplotlib`
+  - [![Anaconda-Server Badge](https://anaconda.org/anaconda/numpy/badges/version.svg)](https://anaconda.org/anaconda/numpy): `conda install numpy`
+  - [![Anaconda-Server Badge](https://anaconda.org/anaconda/scipy/badges/version.svg)](https://anaconda.org/anaconda/scipy): `conda install scipy`
+  - [![Anaconda-Server Badge](https://anaconda.org/pytorch/pytorch/badges/installer/conda.svg)](https://conda.anaconda.org/pytorch): `conda install pytorch torchvision -c pytorch`
+  - [![Anaconda-Server Badge](https://anaconda.org/conda-forge/tqdm/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge): `conda install -c conda-forge tqdm`
+  - [![PyPI version](https://badge.fury.io/py/albumentations.svg)](https://badge.fury.io/py/albumentations): `pip install albumentations`
+  - [![PyPI version](https://badge.fury.io/py/tensorboardX.svg)](https://badge.fury.io/py/tensorboardX): `pip install tensorboardX`
+
 
 
 
