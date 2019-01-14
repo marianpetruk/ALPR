@@ -2,11 +2,14 @@ from __future__ import absolute_import
 
 import os
 import shutil
-import torch 
-import math
-import numpy as np
+import torch
+# import math
+# import numpy as np
 import scipy.io
-import matplotlib.pyplot as plt
+
+
+# import matplotlib.pyplot as plt
+
 
 def to_numpy(tensor):
     if torch.is_tensor(tensor):
@@ -27,7 +30,7 @@ def to_torch(ndarray):
 
 
 def save_checkpoint(state, is_best, checkpoint='checkpoint_fpn', filename='checkpoint.pth.tar', snapshot=None):
-#     preds = to_numpy(preds)
+    #     preds = to_numpy(preds)
     filepath = os.path.join(checkpoint, filename)
     torch.save(state, filepath)
 
@@ -41,7 +44,7 @@ def save_checkpoint(state, is_best, checkpoint='checkpoint_fpn', filename='check
 def save_pred(preds, checkpoint='checkpoint', filename='preds_valid.mat'):
     preds = to_numpy(preds)
     filepath = os.path.join(checkpoint, filename)
-    scipy.io.savemat(filepath, mdict={'preds' : preds})
+    scipy.io.savemat(filepath, mdict={'preds': preds})
 
 
 def adjust_learning_rate(optimizer, epoch, lr, schedule, gamma):
@@ -51,4 +54,3 @@ def adjust_learning_rate(optimizer, epoch, lr, schedule, gamma):
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
     return lr
-

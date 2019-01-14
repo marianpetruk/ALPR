@@ -26,10 +26,11 @@ class ConvRelu(nn.Module):
         x = self.activation(x)
         return x
 
+
 class UNetResNet(nn.Module):
 
-    def __init__(self, encoder_depth = 101, num_classes=2, num_filters=32, dropout_2d=0.2,
-             pretrained=True, is_deconv=True):
+    def __init__(self, encoder_depth=101, num_classes=2, num_filters=32, dropout_2d=0.2,
+                 pretrained=True, is_deconv=True):
         super().__init__()
         self.num_classes = num_classes
         self.dropout_2d = dropout_2d
@@ -60,13 +61,13 @@ class UNetResNet(nn.Module):
         self.conv3 = self.encoder.layer2
         self.conv4 = self.encoder.layer3
         self.conv5 = self.encoder.layer4
-        self.center = DecoderCenter(bottom_channel_nr, num_filters * 8 *2, num_filters * 8, False)
+        self.center = DecoderCenter(bottom_channel_nr, num_filters * 8 * 2, num_filters * 8, False)
 
-        self.dec5 =  DecoderBlockV(bottom_channel_nr + num_filters * 8, num_filters * 8 * 2, num_filters * 2,   is_deconv)
+        self.dec5 = DecoderBlockV(bottom_channel_nr + num_filters * 8, num_filters * 8 * 2, num_filters * 2, is_deconv)
         self.dec4 = DecoderBlockV(bottom_channel_nr // 2 + num_filters * 2, num_filters * 8, num_filters * 2, is_deconv)
         self.dec3 = DecoderBlockV(bottom_channel_nr // 4 + num_filters * 2, num_filters * 4, num_filters * 2, is_deconv)
         self.dec2 = DecoderBlockV(bottom_channel_nr // 8 + num_filters * 2, num_filters * 2, num_filters * 2, is_deconv)
-        self.dec1 = DecoderBlockV(num_filters * 2 , num_filters, num_filters * 2, is_deconv)
+        self.dec1 = DecoderBlockV(num_filters * 2, num_filters, num_filters * 2, is_deconv)
         self.dec0 = ConvRelu(num_filters * 10, num_filters * 2)
         self.final = nn.Conv2d(num_filters * 2, num_classes, kernel_size=1)
 
@@ -95,6 +96,7 @@ class UNetResNet(nn.Module):
 
         return self.final(dec0)
 
+
 class DecoderBlockV(nn.Module):
     def __init__(self, in_channels, middle_channels, out_channels, is_deconv=True):
         super(DecoderBlockV, self).__init__()
@@ -120,12 +122,10 @@ class DecoderBlockV(nn.Module):
         return self.block(x)
 
 
-
 class DecoderCenter(nn.Module):
     def __init__(self, in_channels, middle_channels, out_channels, is_deconv=True):
         super(DecoderCenter, self).__init__()
         self.in_channels = in_channels
-
 
         if is_deconv:
             """
@@ -137,7 +137,7 @@ class DecoderCenter(nn.Module):
                 ConvRelu(in_channels, middle_channels),
                 nn.ConvTranspose2d(middle_channels, out_channels, kernel_size=4, stride=2,
                                    padding=1),
-        nn.BatchNorm2d(out_channels),
+                nn.BatchNorm2d(out_channels),
                 nn.ReLU(inplace=True)
             )
         else:

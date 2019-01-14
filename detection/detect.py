@@ -1,14 +1,17 @@
 import numpy as np
 import torch
 import os
-from unet_resnet import UNetResNet
+from .unet_resnet import UNetResNet
 import torch.utils.data as data
-import torchvision.transforms as transforms
+# import torchvision.transforms as transforms
 from albumentations import *
-from imutils import *
+# from imutils import *
 import cv2
 from tqdm import tqdm
-from matplotlib import pyplot as plt
+
+
+# from matplotlib import pyplot as plt
+
 
 def order_points(pts):
     # initialzie a list of coordinates that will be ordered
@@ -32,6 +35,7 @@ def order_points(pts):
 
     # return the ordered coordinates
     return rect
+
 
 def perpectiveTransform(image, pts):
     # obtain a consistent order of the points and unpack them
@@ -71,6 +75,7 @@ def perpectiveTransform(image, pts):
     # return the warped image
     return warped
 
+
 weights = torch.load('checkpoint/model_best.pth.tar', map_location=lambda storage, loc: storage)
 start_epoch = weights['epoch']
 best_acc = weights['best_acc']
@@ -86,21 +91,19 @@ model.load_state_dict(new_dict)
 model.to('cpu')
 
 
-# на вхід модельки треба давати картинку, яка процесить так як для евалюейшину в дата лоадері
-
 class Cars(data.Dataset):
     def __init__(self, jsonfile, img_folder, out_res=(256, 512), train=True):
         self.img_folder = img_folder  # root image folders
         self.out_res = out_res
         self.train = train
 
-
         # if train:
         # self.anno = os.listdir('data/train/')
         # else:
         #     self.anno = os.listdir('data/test/')
 
-        self.anno = ['../test1.jpg', '../7513062eb6bf0f06d20230aef126b5dc.jpg', '../photo5323601870675093934.jpg', '../photo5323601870675093935.jpg', '../photo5323601870675093936.jpg']
+        self.anno = ['../test1.jpg', '../7513062eb6bf0f06d20230aef126b5dc.jpg', '../photo5323601870675093934.jpg',
+                     '../photo5323601870675093935.jpg', '../photo5323601870675093936.jpg']
 
         self.transform = Compose([
             Normalize(
@@ -142,7 +145,6 @@ print(len(loader))
 # exit(0)
 
 for i, (inputs, orig, meta) in tqdm(enumerate(loader)):
-
     # print(i)
     # print(meta)
 
@@ -173,8 +175,6 @@ for i, (inputs, orig, meta) in tqdm(enumerate(loader)):
 
     # cv2.rectangle(img, top_left, bottom_right, (255, 0, 0), 2)
 
-
-
     pts = np.array([[top_left, top_right, bottom_right, bottom_left]], np.int32)
     # pts = pts.reshape((-1, 1, 2))
     # cv2.polylines(img, [pts], True, (0, 255, 255))
@@ -202,14 +202,11 @@ for i, (inputs, orig, meta) in tqdm(enumerate(loader)):
 
     # pts = np.array([top_left, top_right, bottom_right, bottom_left], dtype="float32")
 
-
     # crop_img = masked_image[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]] #img[y:y + h, x:x + w]
     # cv2.imshow("cropped", crop_img)
     # cv2.waitKey(0)
     # cv2.imwrite("cropped" + str(i) + ".jpg", crop_img)
     # cv2.waitKey(0)
-
-
 
     # cv2.imshow("image", img)
     # cv2.waitKey(0)
@@ -217,15 +214,3 @@ for i, (inputs, orig, meta) in tqdm(enumerate(loader)):
 
     # exit(0)
     print()
-
-
-# top_left = np.unravel_index(score_map[0][0].argmax(), score_map[0][0].shape)
-# bottom_left = np.unravel_index(score_map[0][1].argmax(), score_map[0][1].shape)
-# bottom_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)
-# top_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)
-#
-
-# print(top_left)
-# print(bottom_right)
-
-

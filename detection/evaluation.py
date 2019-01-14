@@ -1,13 +1,13 @@
 from __future__ import absolute_import
 
 import math
-import numpy as np
-import matplotlib.pyplot as plt
-from random import randint
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from random import randint
 
-from misc import *
+from .misc import *
 
-# from .transforms import transform, transform_preds
+from .transforms import transform, transform_preds
 
 __all__ = ['accuracy', 'AverageMeter']
 

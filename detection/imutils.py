@@ -5,7 +5,8 @@ import torch.nn as nn
 import numpy as np
 import scipy.misc
 
-from misc import *
+from matplotlib import pyplot as plt
+from .misc import *
 
 
 def im_to_numpy(img):

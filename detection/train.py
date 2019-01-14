@@ -1,26 +1,27 @@
 from __future__ import print_function, absolute_import
 
 import os
+import errno
 import argparse
 import time
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import torch
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import torch.optim
-import torchvision.datasets as datasets
+# import torchvision.datasets as datasets
 
 from tensorboardX import SummaryWriter
 
-from evaluation import accuracy, AverageMeter, final_preds, iou_loss, iou_metric
-from misc import save_checkpoint, save_pred, adjust_learning_rate
+from .evaluation import accuracy, AverageMeter, final_preds, iou_loss, iou_metric
+from .misc import save_checkpoint, save_pred, adjust_learning_rate
 # from imutils import batch_with_heatmap
 # from hourglass_net import HourglassNet
 # from unet_seresnext import UNetSEResNext
 # from fpn import FPNSeg
-from unet_resnet import UNetResNet
-from dataset import Cars
+from .unet_resnet import UNetResNet
+from .dataset import Cars
 
 best_acc = 0
 best_loss = 1000000.0
@@ -50,7 +51,7 @@ def main(args):
     # optionally resume from a checkpoint
     title = 'keypoints_hg'
     if args.resume:
-        if isfile(args.resume):
+        if os.path.isfile(args.resume):
             print("=> loading checkpoint '{}'".format(args.resume))
             checkpoint = torch.load(args.resume)
             args.start_epoch = checkpoint['epoch']
@@ -138,7 +139,6 @@ def train(train_loader, model, criterion, optimizer, logger, epoch, debug=False,
     for i, (inputs, target, meta) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)
-
 
         input_var = torch.autograd.Variable(inputs.cuda())
         target_var = torch.autograd.Variable(target.cuda())
