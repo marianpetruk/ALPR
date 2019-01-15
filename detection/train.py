@@ -14,14 +14,14 @@ import torch.optim
 
 from tensorboardX import SummaryWriter
 
-from .evaluation import accuracy, AverageMeter, final_preds, iou_loss, iou_metric
-from .misc import save_checkpoint, save_pred, adjust_learning_rate
+from detection.evaluation import accuracy, AverageMeter, final_preds, iou_loss, iou_metric
+from detection.misc import save_checkpoint, save_pred, adjust_learning_rate
 # from imutils import batch_with_heatmap
 # from hourglass_net import HourglassNet
 # from unet_seresnext import UNetSEResNext
 # from fpn import FPNSeg
-from .unet_resnet import UNetResNet
-from .dataset import Cars
+from detection.unet_resnet import UNetResNet
+from detection.dataset import Cars
 
 best_acc = 0
 best_loss = 1000000.0

@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import os
-from .unet_resnet import UNetResNet
+from detection.unet_resnet import UNetResNet
 import torch.utils.data as data
 # import torchvision.transforms as transforms
 from albumentations import *
@@ -76,23 +76,8 @@ def perpectiveTransform(image, pts):
     return warped
 
 
-weights = torch.load('checkpoint/model_best.pth.tar', map_location=lambda storage, loc: storage)
-start_epoch = weights['epoch']
-best_acc = weights['best_acc']
-keys = weights['state_dict'].keys()
-new_dict = {}
-for old_key in keys:
-    new_key = '.'.join(old_key.split('.')[1:])
-    new_dict[new_key] = weights['state_dict'][old_key]
-
-model = UNetResNet(num_classes=4)
-model.load_state_dict(new_dict)
-
-model.to('cpu')
-
-
 class Cars(data.Dataset):
-    def __init__(self, jsonfile, img_folder, out_res=(256, 512), train=True):
+    def __init__(self, jsonfile, img_folder, testimg, out_res=(256, 512), train=True):
         self.img_folder = img_folder  # root image folders
         self.out_res = out_res
         self.train = train
@@ -102,8 +87,7 @@ class Cars(data.Dataset):
         # else:
         #     self.anno = os.listdir('data/test/')
 
-        self.anno = ['../test1.jpg', '../7513062eb6bf0f06d20230aef126b5dc.jpg', '../photo5323601870675093934.jpg',
-                     '../photo5323601870675093935.jpg', '../photo5323601870675093936.jpg']
+        self.anno = [testimg]
 
         self.transform = Compose([
             Normalize(
@@ -133,84 +117,112 @@ class Cars(data.Dataset):
         return len(self.anno)
 
 
-test_batch = 1
-workers = 1
+def detect(testimg):
+    weights = torch.load('checkpoint/model_best.pth.tar', map_location=lambda storage, loc: storage)
+    start_epoch = weights['epoch']
+    best_acc = weights['best_acc']
 
-loader = torch.utils.data.DataLoader(
-    Cars('data/cars_annotations.json', 'data/train', train=False),
-    batch_size=test_batch, shuffle=False,
-    num_workers=workers, pin_memory=True)
+    keys = weights['state_dict'].keys()
+    new_dict = {}
+    for old_key in keys:
+        new_key = '.'.join(old_key.split('.')[1:])
+        new_dict[new_key] = weights['state_dict'][old_key]
 
-print(len(loader))
-# exit(0)
+    model = UNetResNet(num_classes=4)
+    model.load_state_dict(new_dict)
 
-for i, (inputs, orig, meta) in tqdm(enumerate(loader)):
-    # print(i)
-    # print(meta)
+    # print(model)
 
-    img = cv2.imread(meta["img_name"][0], cv2.IMREAD_COLOR)
-    img = cv2.resize(img, (512, 256))
+    model.to('cpu')
 
-    input_var = torch.autograd.Variable(inputs.cpu(), volatile=True)
-    output = model(input_var)
-    score_map = output.data.cpu()
+    test_batch = 1
+    workers = 1
 
-    # print(score_map)
+    loader = torch.utils.data.DataLoader(
+        Cars('data/cars_annotations.json', 'data/train', testimg=testimg, train=False),
+        batch_size=test_batch, shuffle=False,
+        num_workers=workers, pin_memory=True)
+
+    print(len(loader))
     # exit(0)
 
-    top_left = np.unravel_index(score_map[0][0].argmax(), score_map[0][0].shape)[::-1]
-    bottom_left = np.unravel_index(score_map[0][1].argmax(), score_map[0][1].shape)[::-1]
-    bottom_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
-    top_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
+    for i, (inputs, orig, meta) in tqdm(enumerate(loader)):
+        # print(i)
+        # print(meta)
 
-    top_right = list(top_right)
-    top_right[0] += abs(top_left[0] - bottom_left[0])
-    top_right[1] -= abs(top_left[1] - bottom_left[1])
-    top_right = tuple(top_right)
+        img = cv2.imread(meta["img_name"][0], cv2.IMREAD_COLOR)
+        img = cv2.resize(img, (512, 256))
 
-    # print(top_left)
-    # print(top_right)
-    # print(bottom_right)
-    # print(bottom_left)
+        input_var = torch.autograd.Variable(inputs.cpu(), volatile=True)
+        output = model(input_var)
+        score_map = output.data.cpu()
 
-    # cv2.rectangle(img, top_left, bottom_right, (255, 0, 0), 2)
+        # print(score_map)
+        # exit(0)
 
-    pts = np.array([[top_left, top_right, bottom_right, bottom_left]], np.int32)
-    # pts = pts.reshape((-1, 1, 2))
-    # cv2.polylines(img, [pts], True, (0, 255, 255))
+        top_left = np.unravel_index(score_map[0][0].argmax(), score_map[0][0].shape)[::-1]
+        bottom_left = np.unravel_index(score_map[0][1].argmax(), score_map[0][1].shape)[::-1]
+        bottom_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
+        top_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
 
-    mask = np.zeros(img.shape, dtype=np.uint8)
-    # fill the ROI so it doesn't get wiped out when the mask is applied
-    channel_count = img.shape[2]  # i.e. 3 or 4 depending on your image
-    ignore_mask_color = (255,) * channel_count
-    cv2.fillPoly(mask, pts, ignore_mask_color)
-    # from Masterfool: use cv2.fillConvexPoly if you know it's convex
+        top_right = list(top_right)
+        top_right[0] += abs(top_left[0] - bottom_left[0])
+        top_right[1] -= abs(top_left[1] - bottom_left[1])
+        top_right = tuple(top_right)
 
-    # apply the mask
-    masked_image = cv2.bitwise_and(img, mask)
+        # print(top_left)
+        # print(top_right)
+        # print(bottom_right)
+        # print(bottom_left)
 
-    warped = perpectiveTransform(img, pts[0])
-    # cv2.imshow("warped", warped)
-    # cv2.waitKey(0)
-    cv2.imwrite("warped" + str(i) + ".jpg", warped)
+        # cv2.rectangle(img, top_left, bottom_right, (255, 0, 0), 2)
 
-    # cv2.imshow("masked_image", masked_image)
-    # cv2.waitKey(0)
+        pts = np.array([[top_left, top_right, bottom_right, bottom_left]], np.int32)
+        # pts = pts.reshape((-1, 1, 2))
+        # cv2.polylines(img, [pts], True, (0, 255, 255))
 
-    # print("top_left", top_left)
-    # print("bottom_right", bottom_right)
+        mask = np.zeros(img.shape, dtype=np.uint8)
+        # fill the ROI so it doesn't get wiped out when the mask is applied
+        channel_count = img.shape[2]  # i.e. 3 or 4 depending on your image
+        ignore_mask_color = (255,) * channel_count
+        cv2.fillPoly(mask, pts, ignore_mask_color)
+        # from Masterfool: use cv2.fillConvexPoly if you know it's convex
 
-    # pts = np.array([top_left, top_right, bottom_right, bottom_left], dtype="float32")
+        # apply the mask
+        masked_image = cv2.bitwise_and(img, mask)
 
-    # crop_img = masked_image[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]] #img[y:y + h, x:x + w]
-    # cv2.imshow("cropped", crop_img)
-    # cv2.waitKey(0)
-    # cv2.imwrite("cropped" + str(i) + ".jpg", crop_img)
-    # cv2.waitKey(0)
+        warped = perpectiveTransform(img, pts[0])
 
-    # cv2.imshow("image", img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+        return warped
 
-    # exit(0)
-    print()
+        # cv2.imshow("warped", warped)
+        # cv2.waitKey(0)
+        # cv2.imwrite("warped" + str(i) + ".jpg", warped)
+
+        # cv2.imshow("masked_image", masked_image)
+        # cv2.waitKey(0)
+
+        # print("top_left", top_left)
+        # print("bottom_right", bottom_right)
+
+        # pts = np.array([top_left, top_right, bottom_right, bottom_left], dtype="float32")
+
+        # crop_img = masked_image[top_left[1]:bottom_right[1], top_left[0]:bottom_right[0]] #img[y:y + h, x:x + w]
+        # cv2.imshow("cropped", crop_img)
+        # cv2.waitKey(0)
+        # cv2.imwrite("cropped" + str(i) + ".jpg", crop_img)
+        # cv2.waitKey(0)
+
+        # cv2.imshow("image", img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
+        # exit(0)
+        # print()
+
+
+img = detect("../7513062eb6bf0f06d20230aef126b5dc.jpg")
+
+# cv2.imshow("image", img)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()

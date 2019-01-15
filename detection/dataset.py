@@ -10,7 +10,7 @@ import torch
 import torch.utils.data as data
 # import torchvision.transforms as transforms
 from albumentations import *
-from .imutils import *
+from detection.imutils import *
 import cv2
 
 

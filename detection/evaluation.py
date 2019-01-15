@@ -5,9 +5,9 @@ import math
 # import matplotlib.pyplot as plt
 # from random import randint
 
-from .misc import *
+from detection.misc import *
 
-from .transforms import transform, transform_preds
+from detection.transforms import transform, transform_preds
 
 __all__ = ['accuracy', 'AverageMeter']
 

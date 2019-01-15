@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 
-import torch
-import torch.nn as nn
+# import torch
+# import torch.nn as nn
 import numpy as np
 import scipy.misc
 
 from matplotlib import pyplot as plt
-from .misc import *
+from detection.misc import *
 
 
 def im_to_numpy(img):
