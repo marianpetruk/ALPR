@@ -7,9 +7,6 @@ import cv2
 
 from segmentation.plate_recognition.license_plate.license_plate import LicensePlateDetector
 
-# for imagePath in sorted(list(paths.list_images("./warped"))):
-#     image = cv2.imread(imagePath)
-
 
 def segmenting(image):
     # if the width is greater than 640 pixels, then resize the image
@@ -27,9 +24,24 @@ def segmenting(image):
     # thresh = np.dstack([lp.thresh] * 3)
     # output = np.vstack([lp.plate, thresh, candidates])
     # cv2.imshow("Plate & Candidates", output)
-
+    import os
+    if not os.path.exists("../../data"):
+        os.makedirs("../../data")
+    for i in range(len(lp.chars)):
+        cv2.imshow(str(i), lp.chars[i])
+        cv2.imwrite("../../data/{}.jpg".format(i), lp.chars[i])
     # display the output image
     # cv2.imshow("Image", image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
     return lp.chars
+
+
+if __name__ == "__main__":
+    for imagePath in sorted(list(paths.list_images("../images/signs"))):
+        img = cv2.imread(imagePath)
+        print(imagePath)
+        segmenting(img)
+
+
+

@@ -39,7 +39,7 @@ class LicensePlateDetector:
         plate = imutils.resize(plate, width=400)
         thresh = imutils.resize(thresh, width=400)
         # cv2.imwrite("./bad_black_letters/{}.jpg".format(self.lpNumber), cv2.bitwise_not(thresh))
-        cv2.imshow("Thresh", thresh)
+        # cv2.imshow("Thresh", thresh)
 
         # perform a connected components analysis and initialize the mask to store the locations
         # of the character candidates
@@ -103,8 +103,8 @@ class LicensePlateDetector:
         # take bitwise AND of the raw thresholded image and character candidates to get a more
         # clean seqmentation of the characters
         thresh = cv2.bitwise_and(thresh, thresh, mask=charCandidates)
-        cv2.imwrite("./bad_black_letters/{}.jpg".format(self.lpNumber), cv2.bitwise_not(thresh))
-        cv2.imshow("Char Threshold", cv2.bitwise_not(thresh))
+        # cv2.imwrite("./bad_black_letters/{}.jpg".format(self.lpNumber), cv2.bitwise_not(thresh))
+        # cv2.imshow("Char Threshold", thresh)
         # cv2.waitKey(0)
 
         # return the license plate region object containing the license plate, the thresholded
