@@ -28,6 +28,7 @@ class LicensePlateDetector:
         # apply a 4-point transform to extract the license plate
         plate = self.image#perspective.four_point_transform(self.image, region)
         # cv2.imshow("Perspective Transform", imutils.resize(plate, width=400))
+        # cv2.waitKey(0)
 
         # extract the Value component from the HSV color space and apply adaptive thresholding
         # to reveal the characters on the license plate
@@ -40,7 +41,7 @@ class LicensePlateDetector:
         thresh = imutils.resize(thresh, width=400)
         # cv2.imwrite("./bad_black_letters/{}.jpg".format(self.lpNumber), cv2.bitwise_not(thresh))
         # cv2.imshow("Thresh", thresh)
-
+        # cv2.waitKey(0)
         # perform a connected components analysis and initialize the mask to store the locations
         # of the character candidates
         labels = measure.label(thresh, neighbors=8, background=0)
@@ -96,18 +97,24 @@ class LicensePlateDetector:
         elif cv2.__version__ == "4.0.0":
             cnts, _ = cv2.findContours(charCandidates.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # cv2.imshow("Original Canedidates", charCandidates)
+        cv2.imshow("Original Canedidates", charCandidates)
+        # cv2.waitKey(0)
+
 
         # print(self.lpNumber)
         plate1 = plate
         chars = []
         lp_characters_coords = sorted([cv2.boundingRect(cnts[i]) for i in range(len(cnts))], key=lambda x: x[0])
-        if len(lp_characters_coords) == self.numChars:
-            for i in range(len(lp_characters_coords)):
-                xx, yy, ww, hh = lp_characters_coords[i]
-                # character_filename = "dataset3/{}_{}_{}.jpg".format(self.lpNumber[i], self.lpNumber, i)
-                # cv2.imwrite(character_filename, plate1[yy:yy + hh + 5, xx:xx + ww])
-                chars.append(plate1[yy:yy + hh + 5, xx:xx + ww])
+        # print(len(lp_characters_coords))
+        # if len(lp_characters_coords) == self.numChars:
+        for i in range(len(lp_characters_coords)):
+            xx, yy, ww, hh = lp_characters_coords[i]
+            # character_filename = "dataset3/{}_{}_{}.jpg".format(self.lpNumber[i], self.lpNumber, i)
+            # cv2.imwrite(character_filename, plate1[yy:yy + hh + 5, xx:xx + ww])
+            cv2.imshow("o", plate1[yy:yy + hh + 5, xx:xx + ww])
+            cv2.waitKey(0)
+
+            chars.append(plate1[yy:yy + hh + 5, xx:xx + ww])
 
         # take bitwise AND of the raw thresholded image and character candidates to get a more
         # clean seqmentation of the characters

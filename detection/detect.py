@@ -161,6 +161,14 @@ def detect(testimg, model="checkpoint/model_best.pth.tar"):
         # print(score_map)
         # exit(0)
 
+        # coefX = img.shape[0] // 512
+        # coefY = img.shape[1] // 256
+        #
+        # top_left = np.unravel_index(score_map[0][0].argmax() * coefX, score_map[0][0].shape * coefY)[::-1]
+        # bottom_left = np.unravel_index(score_map[0][1].argmax() * coefX, score_map[0][1].shape * coefY)[::-1]
+        # bottom_right = np.unravel_index(score_map[0][2].argmax() * coefX, score_map[0][2].shape * coefY)[::-1]
+        # top_right = np.unravel_index(score_map[0][2].argmax() * coefX, score_map[0][2].shape * coefY)[::-1]
+
         top_left = np.unravel_index(score_map[0][0].argmax(), score_map[0][0].shape)[::-1]
         bottom_left = np.unravel_index(score_map[0][1].argmax(), score_map[0][1].shape)[::-1]
         bottom_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]

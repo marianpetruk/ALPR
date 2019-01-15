@@ -4,17 +4,19 @@ import cv2
 
 
 def main():
-    test_img = "detection/data/1.jpg"
+    test_img = "detection/data/5.jpg"
 
     img = detect(testimg=test_img, model="detection/checkpoint/model_best.pth.tar")
 
+    cv2.imshow("image", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     chars = segmenting(img)
-    print(chars)
+    print(len(chars))
 
 
-    # cv2.imshow("image", img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+
 
 
 if __name__ == "__main__":

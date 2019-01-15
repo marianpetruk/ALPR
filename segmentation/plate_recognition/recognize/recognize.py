@@ -29,11 +29,14 @@ def segmenting(image):
     # output = np.vstack([lp.plate, thresh, candidates])
     # cv2.imshow("Plate & Candidates", output)
 
-    if not os.path.exists("../../data"):
-        os.makedirs("../../data")
+    cwd = os.getcwd()
+    # print(cwd)
+
+    if not os.path.exists(os.path.join(cwd, "segmentation/data")):
+        os.makedirs(os.path.join(cwd, "segmentation/data"))
     for i in range(len(lp.chars)):
         cv2.imshow(str(i), lp.chars[i])
-        cv2.imwrite("../../data/{}.jpg".format(i), lp.chars[i])
+        cv2.imwrite(os.path.join(cwd, "segmentation/data") + "/{}.jpg".format(i), lp.chars[i])
     # display the output image
     # cv2.imshow("Image", image)
     # cv2.waitKey(0)
