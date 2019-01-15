@@ -9,7 +9,7 @@ import imutils
 import cv2
 
 # define the named tupled to store the license plate
-LicensePlate = namedtuple("LicensePlateRegion", ["success", "plate", "thresh", "candidates"])
+LicensePlate = namedtuple("LicensePlateRegion", ["success", "plate", "thresh", "candidates", "chars"])
 
 
 class LicensePlateDetector:
@@ -90,13 +90,15 @@ class LicensePlateDetector:
         # cv2.imshow("Original Canedidates", charCandidates)
 
         # print(self.lpNumber)
-        # plate1 = plate
-        # lp_characters_coords = sorted([cv2.boundingRect(cnts[i]) for i in range(len(cnts))], key=lambda x: x[0])
-        # if len(lp_characters_coords) == self.numChars:
-        #     for i in range(len(lp_characters_coords)):
-        #         xx, yy, ww, hh = lp_characters_coords[i]
-        #         character_filename = "dataset3/{}_{}_{}.jpg".format(self.lpNumber[i], self.lpNumber, i)
-        #         cv2.imwrite(character_filename, plate1[yy:yy + hh + 5, xx:xx + ww])
+        plate1 = plate
+        chars = []
+        lp_characters_coords = sorted([cv2.boundingRect(cnts[i]) for i in range(len(cnts))], key=lambda x: x[0])
+        if len(lp_characters_coords) == self.numChars:
+            for i in range(len(lp_characters_coords)):
+                xx, yy, ww, hh = lp_characters_coords[i]
+                # character_filename = "dataset3/{}_{}_{}.jpg".format(self.lpNumber[i], self.lpNumber, i)
+                # cv2.imwrite(character_filename, plate1[yy:yy + hh + 5, xx:xx + ww])
+                chars.append(plate1[yy:yy + hh + 5, xx:xx + ww])
 
         # take bitwise AND of the raw thresholded image and character candidates to get a more
         # clean seqmentation of the characters
@@ -108,4 +110,4 @@ class LicensePlateDetector:
         # return the license plate region object containing the license plate, the thresholded
         # license plate, and the character candidates
         return LicensePlate(success=True, plate=plate, thresh=thresh,
-                            candidates=charCandidates)
+                            candidates=charCandidates, chars=chars)
