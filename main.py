@@ -1,5 +1,5 @@
 from detection.detect import detect
-from segmentation.plate_recognition.recognize.recognize import segmenting
+from ALPR.segmentation.plate_recognition.recognize.recognize import segmenting
 import cv2
 
 
@@ -9,6 +9,7 @@ def main():
     img = detect(testimg=test_img, model="detection/checkpoint/model_best.pth.tar")
 
     chars = segmenting(img)
+    print(chars)
 
 
     # cv2.imshow("image", img)

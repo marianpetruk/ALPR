@@ -56,7 +56,10 @@ class LicensePlateDetector:
             # current label, then find contours in the label mask
             labelMask = np.zeros(thresh.shape, dtype="uint8")
             labelMask[labels == label] = 255
-            (_, cnts, _) = cv2.findContours(labelMask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            if cv2.__version__ == "3.4.2":
+                (_, cnts, _) = cv2.findContours(labelMask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            elif cv2.__version__ == "4.0.0":
+                cnts, _ =  cv2.findContours(labelMask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
             # ensure at least one contour was found in the mask
             if len(cnts) > 0:
@@ -86,7 +89,13 @@ class LicensePlateDetector:
         # clear pixels that touch the borders of the character candidates mask and detect
         # contours in the candidates mask
         charCandidates = segmentation.clear_border(charCandidates)
-        (_, cnts, _) = cv2.findContours(charCandidates.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # (_, cnts, _) = cv2.findContours(charCandidates.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        if cv2.__version__ == "3.4.2":
+            (_, cnts, _) = cv2.findContours(charCandidates.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        elif cv2.__version__ == "4.0.0":
+            cnts, _ = cv2.findContours(charCandidates.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
         # cv2.imshow("Original Canedidates", charCandidates)
 
         # print(self.lpNumber)

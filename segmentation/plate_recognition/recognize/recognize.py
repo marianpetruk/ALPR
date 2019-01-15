@@ -1,12 +1,15 @@
 # import the necessary packages
-import os
 from __future__ import print_function
 from imutils import paths
+# from segmentation.plate_recognition.license_plate.license_plate import LicensePlateDetector
+
+
+import os
 import numpy as np
 import imutils
 import cv2
 
-from segmentation.plate_recognition.license_plate.license_plate import LicensePlateDetector
+from ALPR.segmentation.plate_recognition.license_plate.license_plate import LicensePlateDetector
 
 
 def segmenting(image):
