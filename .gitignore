@@ -6,3 +6,7 @@ detection/checkpoint/
 segmentation/plate_recognition/recognize/__pycache__/
 
 segmentation/plate_recognition/license_plate/__pycache__/
+
+recognition/knn/__pycache__/
+
+recognition/tesseract/__pycache__/

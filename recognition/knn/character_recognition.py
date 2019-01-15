@@ -6,8 +6,9 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-import PossibleChar
-import Preprocess
+# import PossibleChar
+# import Preprocess
+from ALPR.recognition.knn import PossibleChar, Preprocess
 
 MIN_PIXEL_WIDTH = 2
 MIN_PIXEL_HEIGHT = 8
