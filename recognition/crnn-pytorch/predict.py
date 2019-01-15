@@ -3,11 +3,13 @@ import json
 import string
 import click
 import cv2
+import torch
 
 # from torchvision.transforms import Compose
 from dataset.data_transform import Resize, Rotation, Translation, Scale
 from dataset.text_data import TextDataset
-from dataset.collate_fn import text_collate
+from dataset.my_collate import text_collate
+from dataset.predict_dataset import PredictDataset
 
 from albumentations import *
 
@@ -22,20 +24,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-@click.command()
-@click.option('--model-path', type=str, default=None, nargs=1, help='Path to pretrained model')
-@click.option('--data-path', type=str, default=None, nargs=1, help='Path to images')
-@click.option('--input-size', type=str, default="32x32", help='Alphabet')
-@click.option('--abc', type=str, default=string.ascii_uppercase + string.digits, help='Input size')
-@click.option('--seq-proj', type=str, default="1x20", help='Projection of sequence')
-
-
-def recognize_characters(images):
+def recognize_characters(images, model_path):
     # configurations
     # model parameters
-    model_path = ""
-    seq_proj = (1, 20)
-    input_size = (32, 32)
+    ABC = "ABCEHIKMOPTX0123456789"
+    seq_proj = (32, 32)
+    input_size = (1, 20)
     cuda = False
 
     # fit parameters
@@ -47,12 +41,37 @@ def recognize_characters(images):
         Resize(input_size[0], input_size[1], always_apply=True),
     ])
 
+    # load data set
+    data = PredictDataset(images, None)
+
     # load model
-    model = load_model(data.get_abc(), seq_proj, "resnet18", model_path, cuda).eval()
+    model = load_model(ABC, seq_proj, "resnet18", model_path, cuda).eval()
+
+    # make predictions
+    data_loader = DataLoader(data, batch_size=1, num_workers=4, shuffle=False, collate_fn=text_collate)
+    predicted_charcters = []
+    for item in tqdm(data_loader):
+        imgs = Variable(item["img"])
+        out = model(imgs, decode=True)
+        predicted_character = out[0]
+        predicted_charcters.append(predicted_character)
+
+    return "".join(predicted_charcters)
 
 
+def text_to_seq(self, text):
+    seq = []
+    for c in text:
+        seq.append(self.config["abc"].find(c) + 1)
+    return seq
 
 
+@click.command()
+@click.option('--model-path', type=str, default=None, nargs=1, help='Path to pretrained model')
+@click.option('--data-path', type=str, default=None, nargs=1, help='Path to images')
+@click.option('--input-size', type=str, default="32x32", help='Alphabet')
+@click.option('--abc', type=str, default=string.ascii_uppercase + string.digits, help='Input size')
+@click.option('--seq-proj', type=str, default="1x20", help='Projection of sequence')
 def main(model_path, data_path, input_size, abc, seq_proj):
     seq_proj = [int(x) for x in seq_proj.split('x')]
     cuda = False
@@ -106,4 +125,6 @@ def predict(model, data):
 
 
 if __name__ == "__main__":
-    main()
+    #main()
+    image = cv2.imread("/home/vosar/Documents/CS@UCU/AI/CourseProject/datasets/dataset-real-plates-500-10000/data/0_AA0000AA_2.jpg")
+    print(recognize_characters([image], "recognition/crnn-pytorch/out/crnn_resnet18_ABCEHIKMOPTX0123456789_best"))
