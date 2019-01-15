@@ -15,10 +15,10 @@ def main():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-    chars = segmenting(img)
+    chars, wb = segmenting(img)
     print(len(chars))
 
-    knn_predicted_plate_number = knn_recognize(chars)
+    knn_predicted_plate_number = knn_recognize(img)
     print("knn predict:", knn_predicted_plate_number)
     img_copy = img.copy()
     font = cv2.FONT_HERSHEY_SIMPLEX

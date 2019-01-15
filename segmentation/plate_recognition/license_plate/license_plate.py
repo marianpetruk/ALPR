@@ -9,7 +9,7 @@ import imutils
 import cv2
 
 # define the named tupled to store the license plate
-LicensePlate = namedtuple("LicensePlateRegion", ["success", "plate", "thresh", "candidates", "chars"])
+LicensePlate = namedtuple("LicensePlateRegion", ["success", "plate", "thresh", "candidates", "chars", "wb"])
 
 
 class LicensePlateDetector:
@@ -119,6 +119,7 @@ class LicensePlateDetector:
         # take bitwise AND of the raw thresholded image and character candidates to get a more
         # clean seqmentation of the characters
         thresh = cv2.bitwise_and(thresh, thresh, mask=charCandidates)
+        wb = cv2.bitwise_not(thresh)
         # cv2.imwrite("./bad_black_letters/{}.jpg".format(self.lpNumber), cv2.bitwise_not(thresh))
         # cv2.imshow("Char Threshold", thresh)
         # cv2.waitKey(0)
@@ -126,4 +127,4 @@ class LicensePlateDetector:
         # return the license plate region object containing the license plate, the thresholded
         # license plate, and the character candidates
         return LicensePlate(success=True, plate=plate, thresh=thresh,
-                            candidates=charCandidates, chars=chars)
+                            candidates=charCandidates, chars=chars, wb=wb)

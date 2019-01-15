@@ -95,16 +95,20 @@ def findPossibleCharsInPlate(imgGrayscale, imgThresh):
     imgThreshCopy = imgThresh.copy()
 
     # find all contours in plate
-    imgContours, contours, npaHierarchy = cv2.findContours(imgThreshCopy, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    # imgContours, contours, npaHierarchy = cv2.findContours(imgThreshCopy, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+    if cv2.__version__ == "3.4.2":
+        imgContours, contours, npaHierarchy = cv2.findContours(imgThreshCopy, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    elif cv2.__version__ == "4.0.0":
+        contours, npaHierarchy = cv2.findContours(imgThreshCopy, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for contour in contours:  # for each contour
-        possibleChar = PossibleChar.PossibleChar(contour)
+            possibleChar = PossibleChar.PossibleChar(contour)
 
-        if checkIfPossibleChar(
-                possibleChar):  # if contour is a possible char, note this does not compare to other chars (yet) . . .
-            listOfPossibleChars.append(possibleChar)  # add to list of possible chars
+            if checkIfPossibleChar(possibleChar):  # if contour is a possible char, note this does not compare to other chars (yet) . . .
+                listOfPossibleChars.append(possibleChar)  # add to list of possible chars
+            # end if
         # end if
-    # end if
 
     return listOfPossibleChars
 

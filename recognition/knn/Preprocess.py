@@ -28,6 +28,7 @@ def preprocess(imgOriginal):
 
 ###################################################################################################
 def extractValue(imgOriginal):
+    # print(imgOriginal.shape)
     height, width, numChannels = imgOriginal.shape
 
     imgHSV = np.zeros((height, width, 3), np.uint8)

@@ -41,7 +41,7 @@ def segmenting(image):
     # cv2.imshow("Image", image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    return lp.chars
+    return lp.chars, lp.wb
 
 
 if __name__ == "__main__":
