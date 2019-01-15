@@ -1,0 +1,8 @@
+
+detection/__pycache__/
+
+detection/checkpoint/
+
+segmentation/plate_recognition/recognize/__pycache__/
+
+segmentation/plate_recognition/license_plate/__pycache__/

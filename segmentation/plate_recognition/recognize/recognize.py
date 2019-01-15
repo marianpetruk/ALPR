@@ -1,14 +1,15 @@
 # import the necessary packages
 from __future__ import print_function
 from imutils import paths
+# from segmentation.plate_recognition.license_plate.license_plate import LicensePlateDetector
+
+
+import os
 import numpy as np
 import imutils
 import cv2
 
-from segmentation.plate_recognition.license_plate.license_plate import LicensePlateDetector
-
-# for imagePath in sorted(list(paths.list_images("./warped"))):
-#     image = cv2.imread(imagePath)
+from ALPR.segmentation.plate_recognition.license_plate.license_plate import LicensePlateDetector
 
 
 def segmenting(image):
@@ -28,8 +29,26 @@ def segmenting(image):
     # output = np.vstack([lp.plate, thresh, candidates])
     # cv2.imshow("Plate & Candidates", output)
 
+    cwd = os.getcwd()
+    # print(cwd)
+
+    if not os.path.exists(os.path.join(cwd, "segmentation/data")):
+        os.makedirs(os.path.join(cwd, "segmentation/data"))
+    for i in range(len(lp.chars)):
+        cv2.imshow(str(i), lp.chars[i])
+        cv2.imwrite(os.path.join(cwd, "segmentation/data") + "/{}.jpg".format(i), lp.chars[i])
     # display the output image
     # cv2.imshow("Image", image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
     return lp.chars
+
+
+if __name__ == "__main__":
+    for imagePath in sorted(list(paths.list_images("../images/signs"))):
+        img = cv2.imread(imagePath)
+        print(imagePath)
+        segmenting(img)
+
+
+
