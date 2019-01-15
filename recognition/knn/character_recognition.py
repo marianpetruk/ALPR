@@ -1,6 +1,7 @@
 import os
 import sys
 import math
+import glob
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,12 +41,22 @@ SCALAR_GREEN = (0.0, 255.0, 0.0)
 k_nearest = cv2.ml.KNearest_create()
 
 
-def recognize_characters(possiblePlate):
-    if not loadKNNDataAndTrainKNN():
+def recognize_characters(possible_plate):
+    CLASSIFICATION_FILENAME = "classifications.txt"
+    FLAT_IMG_FILENAME = "flattened_images.txt"
+
+    possible_files = list(
+        filter(lambda f: f.split("/")[-1] == CLASSIFICATION_FILENAME or f.split("/")[-1] == FLAT_IMG_FILENAME,
+                                 glob.iglob("./**/*.txt", recursive=True))
+    )
+    class_f = list(filter(lambda f: f.split("/")[-1] == CLASSIFICATION_FILENAME, possible_files))[0]
+    flat_f = list(filter(lambda f: f.split("/")[-1] == FLAT_IMG_FILENAME, possible_files))[0]
+
+    if not loadKNNDataAndTrainKNN(class_f, flat_f):
         print("Train unsuccessful")
         return
 
-    plate_gray, plate_thresh = Preprocess.preprocess(possiblePlate)
+    plate_gray, plate_thresh = Preprocess.preprocess(possible_plate)
     plate_thresh = cv2.resize(plate_thresh, (0, 0), fx=1.6, fy=1.6)
     thresh_value, plate_thresh = cv2.threshold(plate_thresh, 0.0, 255.0,
                                                cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -292,12 +303,12 @@ def recognizeCharsInPlate(imgThresh, listOfMatchingChars):
     return strChars
 
 
-def loadKNNDataAndTrainKNN():
+def loadKNNDataAndTrainKNN(classifictation_file, flat_images_file):
     allContoursWithData = []  # declare empty lists,
     validContoursWithData = []  # we will fill these shortly
 
     try:
-        npaClassifications = np.loadtxt("classifications.txt", np.float32)  # read in training classifications
+        npaClassifications = np.loadtxt(classifictation_file, np.float32)  # read in training classifications
     except:  # if file could not be opened
         print("error, unable to open classifications.txt, exiting program\n")  # show error message
         os.system("pause")
@@ -305,7 +316,7 @@ def loadKNNDataAndTrainKNN():
     # end try
 
     try:
-        npaFlattenedImages = np.loadtxt("flattened_images.txt", np.float32)  # read in training images
+        npaFlattenedImages = np.loadtxt(flat_images_file, np.float32)  # read in training images
     except:  # if file could not be opened
         print("error, unable to open flattened_images.txt, exiting program\n")  # show error message
         os.system("pause")

@@ -99,7 +99,8 @@ class Cars(data.Dataset):
     def __getitem__(self, index):
         file_name = self.anno[index]
 
-        img_path = os.path.join(self.img_folder, file_name)
+        # img_path = os.path.join(self.img_folder, file_name)
+        img_path = os.path.join(os.getcwd(), file_name)
 
         img = cv2.imread(img_path)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
@@ -117,8 +118,8 @@ class Cars(data.Dataset):
         return len(self.anno)
 
 
-def detect(testimg):
-    weights = torch.load('checkpoint/model_best.pth.tar', map_location=lambda storage, loc: storage)
+def detect(testimg, model="checkpoint/model_best.pth.tar"):
+    weights = torch.load(model, map_location=lambda storage, loc: storage)
     start_epoch = weights['epoch']
     best_acc = weights['best_acc']
 
@@ -139,11 +140,11 @@ def detect(testimg):
     workers = 1
 
     loader = torch.utils.data.DataLoader(
-        Cars('data/cars_annotations.json', 'data/train', testimg=testimg, train=False),
+        Cars('data/cars_annotations.json', 'data/', testimg=testimg, train=False),
         batch_size=test_batch, shuffle=False,
         num_workers=workers, pin_memory=True)
 
-    print(len(loader))
+    # print(len(loader))
     # exit(0)
 
     for i, (inputs, orig, meta) in tqdm(enumerate(loader)):
@@ -220,9 +221,9 @@ def detect(testimg):
         # exit(0)
         # print()
 
-
-img = detect("../7513062eb6bf0f06d20230aef126b5dc.jpg")
-
+#
+# img = detect("../ford.png")
+#
 # cv2.imshow("image", img)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()

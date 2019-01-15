@@ -28,6 +28,31 @@ import numpy as np
 @click.option('--input-size', type=str, default="32x32", help='Alphabet')
 @click.option('--abc', type=str, default=string.ascii_uppercase + string.digits, help='Input size')
 @click.option('--seq-proj', type=str, default="1x20", help='Projection of sequence')
+
+
+def recognize_characters(images):
+    # configurations
+    # model parameters
+    model_path = ""
+    seq_proj = (1, 20)
+    input_size = (32, 32)
+    cuda = False
+
+    # fit parameters
+    transform = Compose([
+        Rotate(limit=15, p=0.01),
+        # MedianBlur(blur_limit=3, p=1),
+        # GaussNoise(var_limit=(3, 3), p=1),
+        Normalize(),
+        Resize(input_size[0], input_size[1], always_apply=True),
+    ])
+
+    # load model
+    model = load_model(data.get_abc(), seq_proj, "resnet18", model_path, cuda).eval()
+
+
+
+
 def main(model_path, data_path, input_size, abc, seq_proj):
     seq_proj = [int(x) for x in seq_proj.split('x')]
     cuda = False
