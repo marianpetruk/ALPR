@@ -1,4 +1,5 @@
 # import the necessary packages
+import os
 from __future__ import print_function
 from imutils import paths
 import numpy as np
@@ -24,7 +25,7 @@ def segmenting(image):
     # thresh = np.dstack([lp.thresh] * 3)
     # output = np.vstack([lp.plate, thresh, candidates])
     # cv2.imshow("Plate & Candidates", output)
-    import os
+
     if not os.path.exists("../../data"):
         os.makedirs("../../data")
     for i in range(len(lp.chars)):
