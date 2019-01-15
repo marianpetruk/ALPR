@@ -152,7 +152,7 @@ def detect(testimg, model="checkpoint/model_best.pth.tar"):
         # print(meta)
 
         img = cv2.imread(meta["img_name"][0], cv2.IMREAD_COLOR)
-        img = cv2.resize(img, (512, 256))
+        # img = cv2.resize(img, (512, 256))
 
         input_var = torch.autograd.Variable(inputs.cpu(), volatile=True)
         output = model(input_var)
@@ -161,18 +161,40 @@ def detect(testimg, model="checkpoint/model_best.pth.tar"):
         # print(score_map)
         # exit(0)
 
-        # coefX = img.shape[0] // 512
-        # coefY = img.shape[1] // 256
-        #
-        # top_left = np.unravel_index(score_map[0][0].argmax() * coefX, score_map[0][0].shape * coefY)[::-1]
-        # bottom_left = np.unravel_index(score_map[0][1].argmax() * coefX, score_map[0][1].shape * coefY)[::-1]
-        # bottom_right = np.unravel_index(score_map[0][2].argmax() * coefX, score_map[0][2].shape * coefY)[::-1]
-        # top_right = np.unravel_index(score_map[0][2].argmax() * coefX, score_map[0][2].shape * coefY)[::-1]
+        # print(img.shape)
+
+        coefX = img.shape[1] / 512
+        coefY = img.shape[0] / 256
 
         top_left = np.unravel_index(score_map[0][0].argmax(), score_map[0][0].shape)[::-1]
         bottom_left = np.unravel_index(score_map[0][1].argmax(), score_map[0][1].shape)[::-1]
         bottom_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
         top_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
+        #
+        # top_left = np.unravel_index(score_map[0][0].argmax(), score_map[0][0].shape)[::-1]
+        # bottom_left = np.unravel_index(score_map[0][1].argmax(), score_map[0][1].shape)[::-1]
+        # bottom_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
+        # top_right = np.unravel_index(score_map[0][2].argmax(), score_map[0][2].shape)[::-1]
+
+        top_right = list(top_right)
+        top_left = list(top_left)
+        bottom_right = list(bottom_right)
+        bottom_left = list(bottom_left)
+
+        top_left[0] *= coefX
+        top_right[0] *= coefX
+        bottom_left[0] *= coefX
+        bottom_right[0] *= coefX
+
+        top_left[1] *= coefY
+        top_right[1] *= coefY
+        bottom_left[1] *= coefY
+        bottom_right[1] *= coefY
+
+        top_right = tuple(top_right)
+        top_left = tuple(top_left)
+        bottom_right = tuple(bottom_right)
+        bottom_left = tuple(bottom_left)
 
         top_right = list(top_right)
         top_right[0] += abs(top_left[0] - bottom_left[0])
@@ -187,6 +209,7 @@ def detect(testimg, model="checkpoint/model_best.pth.tar"):
         # cv2.rectangle(img, top_left, bottom_right, (255, 0, 0), 2)
 
         pts = np.array([[top_left, top_right, bottom_right, bottom_left]], np.int32)
+        # print(pts)
         # pts = pts.reshape((-1, 1, 2))
         # cv2.polylines(img, [pts], True, (0, 255, 255))
 
