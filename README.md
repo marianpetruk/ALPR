@@ -9,14 +9,14 @@ Artifical Intelligence Fundamentals course project
 - Marian Petruk ([@marianpetruk][3])
 
 ## Stages of project:
-- [x] License plate detection and transformation ([@marianpetruk][3])
+- [x] License plate detection and transformation
   - [x] Web scraping (data/images collection) from [РАГУlive facebook group](https://www.facebook.com/groups/rahu.live/)
   - [x] Images labeling with [Labelbox](https://www.labelbox.com/)
   - [x] CNN developing (custom CNN, similar approach as in [Stacked Hourglass Networks for Human Pose Estimation](https://arxiv.org/abs/1603.06937) [![DOI:10.1007/978-3-319-46484-8_292](https://zenodo.org/badge/DOI/10.1007/978-3-319-46484-8_29.svg)](https://doi.org/10.1007/978-3-319-46484-8_29))
   - [x] CNN training
   - [x] CNN testing
-- [ ] Character segmentation ([@AntonBorkivskyi][1])
-- [ ] Character recognition ([@IvKosar][2])
+- [ ] Character segmentation
+- [ ] Character recognition
 
 
 ## Dependencies
