@@ -15,8 +15,8 @@ Artifical Intelligence Fundamentals course project
   - [x] CNN developing (custom CNN, similar approach as in [Stacked Hourglass Networks for Human Pose Estimation](https://arxiv.org/abs/1603.06937) [![DOI:10.1007/978-3-319-46484-8_292](https://zenodo.org/badge/DOI/10.1007/978-3-319-46484-8_29.svg)](https://doi.org/10.1007/978-3-319-46484-8_29))
   - [x] CNN training
   - [x] CNN testing
-- [ ] Character segmentation
-- [ ] Character recognition
+- [x] Character segmentation
+- [x] Character recognition
 
 
 ## Dependencies
